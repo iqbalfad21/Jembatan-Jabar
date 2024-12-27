@@ -107,8 +107,16 @@
                 onEachFeature: function(feature, layer) {
                     if (feature.properties) {
                         layer.bindPopup(`
-                            <b>LINKID:</b> ${feature.properties.LINKID || "Tidak tersedia"}<br>
-                            <b>Nama Ruas:</b> ${feature.properties.Nama_Ruas || "Tidak tersedia"}
+				<b>LINKID:</b> ${feature.properties.LINKID || "Tidak tersedia"}<br>
+    				<b>Nama Ruas:</b> ${feature.properties.Nama_Ruas || "Tidak tersedia"}<br>
+				<b>Satker:</b> ${feature.properties.Satker || "Tidak tersedia"}<br>
+	                     	<b>PPK:</b> ${feature.properties.PPK || "Tidak tersedia"}<br>
+	                     	<b>Panjang SK (km):</b> ${feature.properties.Panjang_SK__km_ || "Tidak tersedia"}<br>
+	                     	<b>Lintas:</b> ${feature.properties.Lintas || "Tidak tersedia"}<br>
+	                     	<b>Kab/Kota:</b> ${feature.properties.Kab_Kota || "Tidak tersedia"}<br>
+	                     	<b>Referensi Awal Ruas:</b> ${feature.properties.Referensi_Awal || "Tidak tersedia"}<br>
+	                     	<b>Referensi Akhir Ruas:</b> ${feature.properties.Referensi_Akhir || "Tidak tersedia"}<br>
+	                     	<b>No SK:</b> ${feature.properties.No_SK || "Tidak tersedia"}
                         `);
                     }
                 }
@@ -126,8 +134,17 @@
                 onEachFeature: function(feature, layer) {
                     if (feature.properties) {
                         layer.bindPopup(`
-                            <b>Nama Jembatan:</b> ${feature.properties.Nama_Jembatan || "Tidak tersedia"}<br>
-                            <b>Lokasi:</b> ${feature.properties.Latitude || "N/A"}, ${feature.properties.Longitude || "N/A"}
+				<b>No Provinsi:</b> ${feature.properties.No_Provinsi || "Tidak tersedia"}<br>
+				<b>Kode Ruas:</b> ${feature.properties.Kode_Ruas || "Tidak tersedia"}<br>
+				<b>Nama Ruas:</b> ${feature.properties.Nama_Ruas || "Tidak tersedia"}<br>
+				<b>Lintas:</b> ${feature.properties.Lintas || "Tidak tersedia"}<br>
+				<b>No Jembatan:</b> ${feature.properties.No_Jembatan || "Tidak tersedia"}<br>
+				<b>Nama Jembatan:</b> ${feature.properties.Nama_Jembatan || "Tidak tersedia"}<br>
+				<b>Status:</b> ${feature.properties.Status || "Tidak tersedia"}<br>
+				<b>Fungsi:</b> ${feature.properties.Fungsi || "Tidak tersedia"}<br>
+				<b>Lokasi Dari:</b> ${feature.properties.Lokasi_Dari || "Tidak tersedia"}<br>
+				<b>Latitude:</b> ${feature.properties.Latitude || "Tidak tersedia"}<br>
+				<b>Longitude:</b> ${feature.properties.Longitude || "Tidak tersedia"}
                         `);
                     }
                 }
