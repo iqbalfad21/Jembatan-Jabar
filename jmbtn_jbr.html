@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Interaktif</title>
+    <link rel="stylesheet" href="lib/leaflet/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        #map { 
+            height: 75vh; 
+        }
+        .leaflet-popup-content {
+            width: 500px;
+        }
+        .popup-images {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .popup-images img {
+            width: 70%;
+            max-width: 640px;
+            height: auto;
+        }
+        .photo-section {
+            margin-bottom: 10px;
+        }
+        .photo-section h3 {
+            margin: 0;
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ff7f50, #ff6347);
+            color: transparent;
+            background-clip: text;
+            text-align: center;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
+            padding: 10px 0;
+            animation: fadeIn 1s ease-in-out;
+        }
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5em;
+            color: #235;
+            text-align: center;
+            margin-top: 10px;
+            padding-bottom: 20px;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Persebaran Jembatan Provinsi Jawa Barat</h1>
+    <h2>BBPJN DKI Jakarta - Jawa Barat</h2>
+    <div id="map"></div>
+
+    <script src="lib/leaflet/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="data/JabarS1SKJ2024.js"></script>
+    <script src="data/JembatanJabar.js"></script>
+    
+    <script>
+        // Inisialisasi peta
+        var map = L.map('map', {
+            center: [-6.920042, 107.619203], // Posisi awal Jawa Barat
+            zoom: 12, // Level zoom awal
+            minZoom: 11 // Menentukan zoom minimal
+        });
+
+        // Tambahkan layer peta dasar
+		L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'
+		}).addTo(map);
+
+        // Fungsi untuk menghasilkan HTML foto dalam popup
+        function generatePhotoHTML(photos) {
+            if (photos && photos.length > 0) {
+                return photos.map(photo => {
+                    return `<img src="${photo}" alt="Foto" style="width: 48%; max-width: 300px; margin-bottom: 10px;"/>`;
+                }).join('');
+            }
+            return "<p>Tidak ada foto tersedia.</p>";
+        }
+
+        // Menambahkan data jalnas ke peta
+        L.geoJSON(jalnas, {
+            style: function(feature) {
+                var linkId = feature.properties.LINKID || 0;
+                var colors = ['red', 'green', 'blue', 'orange', 'purple', 'brown', 'pink', 'cyan'];
+                var color = colors[linkId % colors.length];
+                return {
+                    color: color,
+                    weight: 5,
+                    opacity: 0.6
+                };
+            },
+            onEachFeature: function(feature, layer) {
+                if (feature.properties) {
+                    layer.bindPopup(`
+                        <b>LINKID:</b> ${feature.properties.LINKID || "Tidak tersedia"}<br>
+                        <b>Nama Ruas:</b> ${feature.properties.Nama_Ruas || "Tidak tersedia"}<br>
+                        <b>Satker:</b> ${feature.properties.Satker || "Tidak tersedia"}<br>
+                        <b>PPK:</b> ${feature.properties.PPK || "Tidak tersedia"}<br>
+                        <b>Panjang SK (km):</b> ${feature.properties.Panjang_SK__km_ || "Tidak tersedia"}<br>
+                        <b>Lintas:</b> ${feature.properties.Lintas || "Tidak tersedia"}<br>
+                        <b>Kab/Kota:</b> ${feature.properties.Kab_Kota || "Tidak tersedia"}<br>
+                        <b>Referensi Awal Ruas:</b> ${feature.properties.Referensi_Awal || "Tidak tersedia"}<br>
+                        <b>Referensi Akhir Ruas:</b> ${feature.properties.Referensi_Akhir || "Tidak tersedia"}<br>
+                        <b>No SK:</b> ${feature.properties.No_SK || "Tidak tersedia"}
+                    `);
+                }
+            }
+        }).addTo(map);
+
+        // Menambahkan data jembatanjabar ke peta
+        L.geoJSON(jembatanjabar, {
+            pointToLayer: function(feature, latlng) {
+                return L.marker(latlng); // Membuat marker untuk setiap titik Jembatan
+            },
+            onEachFeature: function(feature, layer) {
+                if (feature.properties) {
+                    layer.bindPopup(`
+						<b>No Provinsi:</b> ${feature.properties.No_Provinsi || "Tidak tersedia"}<br>
+						<b>Kode Ruas:</b> ${feature.properties.Kode_Ruas || "Tidak tersedia"}<br>
+						<b>Nama Ruas:</b> ${feature.properties.Nama_Ruas || "Tidak tersedia"}<br>
+						<b>Lintas:</b> ${feature.properties.Lintas || "Tidak tersedia"}<br>
+						<b>No Jembatan:</b> ${feature.properties.No_Jembatan || "Tidak tersedia"}<br>
+						<b>Suffix:</b> ${feature.properties.Suffix || "Tidak tersedia"}<br>
+						<b>Nama Jembatan:</b> ${feature.properties.Nama_Jembatan || "Tidak tersedia"}<br>
+						<b>Status:</b> ${feature.properties.Status || "Tidak tersedia"}<br>
+						<b>Fungsi:</b> ${feature.properties.Fungsi || "Tidak tersedia"}<br>
+						<b>Lokasi Dari:</b> ${feature.properties.Lokasi_Dari || "Tidak tersedia"}<br>
+						<b>Lokasi KM:</b> ${feature.properties.Lokasi_KM || "Tidak tersedia"}<br>
+						<b>CADIN:</b> ${feature.properties.CADIN || "Tidak tersedia"}<br>
+						<b>Panjang:</b> ${feature.properties.Panjang || "Tidak tersedia"}<br>
+						<b>Jumlah Bentang:</b> ${feature.properties.Jml_Bentang || "Tidak tersedia"}<br>
+						<b>Lebar Jembatan:</b> ${feature.properties.Lebar_Jembatan || "Tidak tersedia"}<br>
+						<b>Lebar Lalu Lintas Kendaraan:</b> ${feature.properties.Lebar_Lalulintas_Kendaraan || "Tidak tersedia"}<br>
+						<b>Lebar Bahu Kiri:</b> ${feature.properties.Lebar_Bahu_Kiri || "Tidak tersedia"}<br>
+						<b>Lebar Bahu Kanan:</b> ${feature.properties.Lebar_Bahu_Kanan || "Tidak tersedia"}<br>
+						<b>Lebar Drainase Kiri:</b> ${feature.properties.Lebar_Drainase_Kiri || "Tidak tersedia"}<br>
+						<b>Lebar Drainase Kanan:</b> ${feature.properties.Lebar_Drainase_Kanan || "Tidak tersedia"}<br>
+						<b>Lebar Trotoar Kiri:</b> ${feature.properties.Lebar_Trotoar_Kiri || "Tidak tersedia"}<br>
+						<b>Lebar Trotoar Kanan:</b> ${feature.properties.Lebar_Trotoar_Kanan || "Tidak tersedia"}<br>
+						<b>Lebar Median:</b> ${feature.properties.Lebar_Median || "Tidak tersedia"}<br>
+						<b>Bangunan Atas:</b> ${feature.properties.Bangunan_Atas || "Tidak tersedia"}<br>
+						<b>Tahun:</b> ${feature.properties.Tahun || "Tidak tersedia"}<br>
+						<b>Latitude:</b> ${feature.properties.Latitude || "Tidak tersedia"}<br>
+						<b>Longitude:</b> ${feature.properties.Longitude || "Tidak tersedia"}
+                    `);
+                }
+            }
+        }).addTo(map);
+
+        // Menambahkan kontrol pencarian
+        L.Control.geocoder().addTo(map);
+    </script>
+</body>
+</html>
